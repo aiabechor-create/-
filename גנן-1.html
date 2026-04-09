@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>הגנן שלי</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green-light: #e8f5e9;
+    --green-mid: #c8e6c9;
+    --green-main: #4caf7d;
+    --green-deep: #2e7d52;
+    --green-text: #1b5e35;
+    --white: #ffffff;
+    --gray-soft: #f7f9f7;
+    --gray-line: #e0ebe0;
+    --text-dark: #1a2e1a;
+    --text-mid: #4a6b4a;
+    --text-light: #7a9a7a;
+    --shadow: 0 4px 24px rgba(44,120,80,0.10);
+    --shadow-card: 0 2px 12px rgba(44,120,80,0.08);
+    --radius: 20px;
+    --radius-sm: 14px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans Hebrew', sans-serif;
+    background: var(--green-light);
+    min-height: 100vh;
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ─── Layout ─── */
+  .app {
+    max-width: 430px;
+    margin: 0 auto;
+    min-height: 100vh;
+    background: var(--green-light);
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ─── Header ─── */
+  .header {
+    background: var(--white);
+    padding: 52px 24px 24px;
+    border-radius: 0 0 32px 32px;
+    box-shadow: var(--shadow-card);
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--green-mid) 0%, transparent 70%);
+    opacity: 0.5;
+  }
+  .header-top {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 4px;
+  }
+  .logo-circle {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: var(--green-light);
+    border: 1.5px solid var(--green-mid);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text-dark);
+    letter-spacing: -0.3px;
+  }
+  .header p {
+    font-size: 13px;
+    color: var(--text-light);
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  /* ─── Main content ─── */
+  .content {
+    padding: 24px 20px 40px;
+  }
+
+  /* ─── Upload area ─── */
+  .upload-zone {
+    background: var(--white);
+    border-radius: var(--radius);
+    border: 2px dashed var(--green-mid);
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .upload-zone:hover, .upload-zone.drag-over {
+    border-color: var(--green-main);
+    background: var(--gray-soft);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow);
+  }
+  .upload-icon {
+    width: 64px; height: 64px;
+    background: var(--green-light);
+    border-radius: 50%;
+    margin: 0 auto 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    border: 1.5px solid var(--green-mid);
+  }
+  .upload-zone h2 {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+  }
+  .upload-zone p {
+    font-size: 13px;
+    color: var(--text-light);
+    line-height: 1.5;
+  }
+
+  /* Camera button */
+  .btn-camera {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--green-mid);
+    background: var(--white);
+    color: var(--green-deep);
+    font-size: 15px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    transition: all 0.2s;
+  }
+  .btn-camera:hover {
+    background: var(--green-light);
+    border-color: var(--green-main);
+  }
+
+  /* ─── Preview ─── */
+  .preview-wrap {
+    border-radius: var(--radius);
+    overflow: hidden;
+    background: var(--white);
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .preview-wrap img {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    display: block;
+  }
+  .preview-overlay {
+    position: absolute;
+    top: 12px; left: 12px;
+  }
+  .btn-remove {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.9);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    color: var(--text-mid);
+    transition: background 0.2s;
+  }
+  .btn-remove:hover { background: white; }
+
+  /* ─── Analyze button ─── */
+  .btn-analyze {
+    margin-top: 16px;
+    width: 100%;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--green-main);
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 16px rgba(76,175,125,0.35);
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+  }
+  .btn-analyze:hover:not(:disabled) {
+    background: var(--green-deep);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(76,175,125,0.4);
+  }
+  .btn-analyze:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ─── Loading ─── */
+  .spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-bar {
+    margin-top: 16px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--green-mid);
+    overflow: hidden;
+  }
+  .loading-bar::after {
+    content: '';
+    display: block;
+    height: 100%;
+    width: 40%;
+    background: var(--green-main);
+    border-radius: 2px;
+    animation: loading 1.2s ease-in-out infinite;
+  }
+  @keyframes loading {
+    0% { transform: translateX(250%); }
+    100% { transform: translateX(-100%); }
+  }
+
+  /* ─── Result card ─── */
+  .result-card {
+    background: var(--white);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    animation: slideUp 0.4s ease forwards;
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .result-header {
+    background: linear-gradient(135deg, var(--green-main), var(--green-deep));
+    padding: 20px 20px 18px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .result-header-icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .result-plant-name {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.2;
+  }
+  .result-plant-sub {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-top: 2px;
+    font-weight: 300;
+  }
+
+  .result-body {
+    padding: 0;
+  }
+
+  .info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 20px;
+    border-bottom: 1px solid var(--gray-line);
+    direction: rtl;
+    text-align: right;
+  }
+  .info-row:last-child { border-bottom: none; }
+
+  .info-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .info-icon.water { background: #e3f2fd; }
+  .info-icon.sun { background: #fff8e1; }
+  .info-icon.soil { background: #f3e5f5; }
+  .info-icon.home { background: #e8f5e9; }
+
+  .info-content {}
+  .info-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 3px;
+  }
+  .info-value {
+    font-size: 14px;
+    color: var(--text-dark);
+    line-height: 1.5;
+    font-weight: 400;
+  }
+
+  /* Diagnosis */
+  .diagnosis-section {
+    margin: 0 20px 20px;
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+  }
+  .diagnosis-header {
+    padding: 12px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .diagnosis-header.healthy {
+    background: #e8f5e9;
+    color: var(--green-deep);
+    border: 1px solid #c8e6c9;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+  .diagnosis-header.problem {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffe0b2;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  }
+  .diagnosis-body {
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.6;
+    color: var(--text-dark);
+    direction: rtl;
+    text-align: right;
+  }
+  .diagnosis-body.healthy {
+    background: #f1f8f2;
+    border: 1px solid #c8e6c9;
+    border-top: none;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+  .diagnosis-body.problem {
+    background: #fffbf5;
+    border: 1px solid #ffe0b2;
+    border-top: none;
+    border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+  }
+
+  /* Reset button */
+  .btn-reset {
+    margin-top: 14px;
+    width: 100%;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    border: 1.5px solid var(--green-mid);
+    background: transparent;
+    color: var(--green-deep);
+    font-size: 14px;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover {
+    background: var(--green-light);
+    border-color: var(--green-main);
+  }
+
+  /* Error */
+  .error-box {
+    margin-top: 14px;
+    padding: 14px 16px;
+    border-radius: var(--radius-sm);
+    background: #fff3f3;
+    border: 1px solid #ffcdd2;
+    color: #c62828;
+    font-size: 14px;
+    text-align: center;
+    direction: rtl;
+  }
+
+  /* Decorative leaf */
+  .deco-leaf {
+    position: absolute;
+    top: -20px; left: -20px;
+    font-size: 80px;
+    opacity: 0.06;
+    transform: rotate(-30deg);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Fade in */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .fade-in { animation: fadeIn 0.5s ease forwards; }
+
+  /* Raw result (fallback) */
+  .raw-result {
+    padding: 20px;
+    font-size: 14px;
+    line-height: 1.8;
+    color: var(--text-dark);
+    direction: rtl;
+    text-align: right;
+    white-space: pre-wrap;
+  }
+  .raw-result strong { color: var(--green-deep); }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="deco-leaf">🌿</div>
+    <div class="header-top">
+      <div class="logo-circle">🌱</div>
+      <div>
+        <h1>הגנן שלי</h1>
+        <p>צלמי צמח, קבלי ייעוץ מומחה</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+
+    <!-- Upload state -->
+    <div id="upload-section" class="fade-in">
+      <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+        <div class="upload-icon">📷</div>
+        <h2>העלי תמונת צמח</h2>
+        <p>גרירה לכאן, בחירה מהגלריה,<br>או צילום ישיר</p>
+      </div>
+      <button class="btn-camera" onclick="document.getElementById('camera-input').click()">
+        📸 צלמי עכשיו
+      </button>
+      <input type="file" id="file-input" accept="image/*" style="display:none" onchange="handleFile(this)">
+      <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none" onchange="handleFile(this)">
+    </div>
+
+    <!-- Preview state -->
+    <div id="preview-section" style="display:none" class="fade-in">
+      <div class="preview-wrap">
+        <img id="preview-img" src="" alt="צמח">
+        <div class="preview-overlay">
+          <button class="btn-remove" onclick="resetAll()">×</button>
+        </div>
+      </div>
+      <button class="btn-analyze" id="analyze-btn" onclick="analyze()">
+        🌿 נתח את הצמח
+      </button>
+      <div id="loading-bar" class="loading-bar" style="display:none"></div>
+    </div>
+
+    <!-- Result state -->
+    <div id="result-section" style="display:none"></div>
+
+    <!-- Error -->
+    <div id="error-box" class="error-box" style="display:none"></div>
+
+  </div>
+</div>
+
+<script>
+const SYSTEM_PROMPT = `אתה מומחה גינון ישראלי ידידותי בשם "גנן". מקבל תמונת צמח ומחזיר ניתוח קצר ומדויק.
+
+החזר בדיוק את הפורמט הבא, ללא תוספות:
+
+שם: [שם נפוץ בעברית]
+שם מדעי: [שם מדעי]
+בית נאים: [1-2 מקומות אידיאליים — משפט קצר]
+השקיה: [כמה פעמים בשבוע/חודש + טיפ]
+אור: [ישיר/עקיף/צל — משפט קצר]
+דישון: [מתי ואיך — משפט אחד]
+אבחון: [אם בריא — כתוב "בריא" בלבד. אם יש בעיה — תאר מה הבעיה ומה לעשות, 2 משפטים.]
+
+שמור על טון חם, ישיר, לא מתנשא.`;
+
+let imageBase64 = null;
+let imageMime = 'image/jpeg';
+
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  imageMime = file.type || 'image/jpeg';
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    imageBase64 = e.target.result.split(',')[1];
+    document.getElementById('preview-img').src = e.target.result;
+    document.getElementById('upload-section').style.display = 'none';
+    document.getElementById('preview-section').style.display = 'block';
+    document.getElementById('result-section').style.display = 'none';
+    document.getElementById('error-box').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// Drag and drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer();
+    dt.items.add(file);
+    document.getElementById('file-input').files = dt.files;
+    handleFile(document.getElementById('file-input'));
+  }
+});
+
+function parse(text) {
+  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const get = (key) => {
+    const line = lines.find(l => l.startsWith(key + ':'));
+    return line ? line.replace(key + ':', '').trim() : null;
+  };
+  return {
+    name: get('שם'),
+    scientific: get('שם מדעי'),
+    home: get('בית נאים'),
+    water: get('השקיה'),
+    sun: get('אור'),
+    soil: get('דישון'),
+    diagnosis: get('אבחון'),
+  };
+}
+
+function renderResult(text) {
+  const d = parse(text);
+  const isHealthy = d.diagnosis && (d.diagnosis === 'בריא' || d.diagnosis.includes('בריא'));
+  const sec = document.getElementById('result-section');
+
+  if (!d.name) {
+    // fallback: show raw with bold
+    const formatted = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    sec.innerHTML = `
+      <div class="result-card">
+        <div class="raw-result">${formatted}</div>
+      </div>
+      <button class="btn-reset" onclick="resetAll()">🌿 צמח חדש</button>`;
+    sec.style.display = 'block';
+    return;
+  }
+
+  sec.innerHTML = `
+    <div class="result-card">
+      <div class="result-header">
+        <div class="result-header-icon">🌿</div>
+        <div>
+          <div class="result-plant-name">${d.name || ''}</div>
+          ${d.scientific ? `<div class="result-plant-sub">${d.scientific}</div>` : ''}
+        </div>
+      </div>
+      <div class="result-body">
+        ${d.home ? `
+        <div class="info-row">
+          <div class="info-icon home">🏡</div>
+          <div class="info-content">
+            <div class="info-label">בית נאים</div>
+            <div class="info-value">${d.home}</div>
+          </div>
+        </div>` : ''}
+        ${d.water ? `
+        <div class="info-row">
+          <div class="info-icon water">💧</div>
+          <div class="info-content">
+            <div class="info-label">השקיה</div>
+            <div class="info-value">${d.water}</div>
+          </div>
+        </div>` : ''}
+        ${d.sun ? `
+        <div class="info-row">
+          <div class="info-icon sun">☀️</div>
+          <div class="info-content">
+            <div class="info-label">אור</div>
+            <div class="info-value">${d.sun}</div>
+          </div>
+        </div>` : ''}
+        ${d.soil ? `
+        <div class="info-row">
+          <div class="info-icon soil">🌱</div>
+          <div class="info-content">
+            <div class="info-label">דישון</div>
+            <div class="info-value">${d.soil}</div>
+          </div>
+        </div>` : ''}
+      </div>
+      ${d.diagnosis ? `
+      <div class="diagnosis-section">
+        <div class="diagnosis-header ${isHealthy ? 'healthy' : 'problem'}">
+          ${isHealthy ? '✅ מצב הצמח' : '⚠️ אבחון'}
+        </div>
+        <div class="diagnosis-body ${isHealthy ? 'healthy' : 'problem'}">
+          ${d.diagnosis}
+        </div>
+      </div>` : ''}
+    </div>
+    <button class="btn-reset" onclick="resetAll()">🌿 צמח חדש</button>
+  `;
+  sec.style.display = 'block';
+}
+
+async function analyze() {
+  if (!imageBase64) return;
+  const btn = document.getElementById('analyze-btn');
+  const loadingBar = document.getElementById('loading-bar');
+  const errorBox = document.getElementById('error-box');
+
+  btn.disabled = true;
+  btn.innerHTML = '<div class="spinner"></div> מנתח...';
+  loadingBar.style.display = 'block';
+  errorBox.style.display = 'none';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: SYSTEM_PROMPT,
+        messages: [{
+          role: 'user',
+          content: [
+            { type: 'image', source: { type: 'base64', media_type: imageMime, data: imageBase64 } },
+            { type: 'text', text: 'נתח את הצמח בתמונה.' }
+          ]
+        }]
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.content?.[0]?.text) {
+      document.getElementById('preview-section').style.display = 'none';
+      renderResult(data.content[0].text);
+    } else {
+      throw new Error('תשובה ריקה');
+    }
+  } catch (e) {
+    errorBox.textContent = 'לא הצלחתי לנתח. בדקי חיבור ונסי שוב.';
+    errorBox.style.display = 'block';
+    btn.disabled = false;
+    btn.innerHTML = '🌿 נסי שוב';
+  }
+
+  loadingBar.style.display = 'none';
+}
+
+function resetAll() {
+  imageBase64 = null;
+  document.getElementById('upload-section').style.display = 'block';
+  document.getElementById('preview-section').style.display = 'none';
+  document.getElementById('result-section').style.display = 'none';
+  document.getElementById('error-box').style.display = 'none';
+  document.getElementById('file-input').value = '';
+  document.getElementById('camera-input').value = '';
+  const btn = document.getElementById('analyze-btn');
+  if (btn) { btn.disabled = false; btn.innerHTML = '🌿 נתח את הצמח'; }
+}
+</script>
+</body>
+</html>
